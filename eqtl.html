@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eQTL Data – Duck GTEx</title>
+    <link rel="icon" href="assets/img/logo.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Extra table-page tweaks */
+        body { background: #f8f4ec; }
+
+        /* Table alignment: title row, filters, and cells */
+        #eqtlTable thead > tr:not(.filter-row) > th,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th {
+            text-align: center !important;
+            vertical-align: middle;
+        }
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_asc,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_desc,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_asc,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_desc {
+            padding-left: 26px !important;
+            padding-right: 26px !important;
+        }
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting::before,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting::after,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::before,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::after,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::before,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::after,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting::before,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting::after,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::before,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::after,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::before,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::after {
+            right: auto !important;
+            left: 50% !important;
+            top: auto !important;
+            bottom: 5px !important;
+            transform: translateX(-50%);
+            line-height: 1;
+        }
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting::before,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::before,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::before,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting::before,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::before,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::before {
+            margin-left: -4px;
+        }
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting::after,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::after,
+        #eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::after,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting::after,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_asc::after,
+        div.dataTables_scrollHead table#eqtlTable thead > tr:not(.filter-row) > th.sorting_desc::after {
+            margin-left: 4px;
+        }
+        #eqtlTable tbody td,
+        #eqtlTable tbody td.dt-center {
+            text-align: center !important;
+            vertical-align: middle;
+        }
+
+        /* Pvalue / numeric cols – mono font */
+        .mono { font-family: 'Consolas', 'Courier New', monospace; font-size: 0.78rem; }
+
+        /* Tissue badge */
+        .badge-tissue {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* ---- Column filter row (second thead row) ---- */
+        table.dataTable thead tr.filter-row th {
+            background: #fdf6e3;
+            padding: 5px 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        table.dataTable thead tr.filter-row input,
+        table.dataTable thead tr.filter-row select {
+            width: 100%;
+            padding: 5px 8px;
+            border: 1px solid #e0c97a;
+            border-radius: 5px;
+            font-size: 0.78rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-weight: 400;
+            color: #333;
+            text-align: center;
+        }
+        table.dataTable thead tr.filter-row input:focus,
+        table.dataTable thead tr.filter-row select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(245,166,35,0.2);
+        }
+        table.dataTable thead tr.filter-row input::placeholder { color: #bbb; }
+        table.dataTable thead tr.filter-row .num-range {
+            display: flex;
+            gap: 4px;
+        }
+        table.dataTable thead tr.filter-row .num-range input {
+            min-width: 0;
+            flex: 1;
+        }
+
+        /* Fix: Show-entries select clipped by scrollX overflow */
+        .dataTables_wrapper { overflow: visible !important; }
+        .dataTables_wrapper .dataTables_length {
+            padding-top: 4px;
+        }
+        .dataTables_wrapper .dataTables_length label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+        .dataTables_wrapper .dataTables_length select {
+            min-width: 84px;
+            padding: 6px 30px 6px 12px;
+            margin: 0;
+            border: 1px solid #e0c97a;
+            border-radius: 6px;
+            background-color: #fff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M3 4.5L6 8l3-3.5H3z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            overflow: visible;
+            cursor: pointer;
+        }
+
+        /* Global search label */
+        .dataTables_filter label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+        .dataTables_filter input {
+            margin-left: 0 !important;
+        }
+        /* Info text */
+        .dataTables_info { padding-top: 10px; }
+
+        /* Page jump widget */
+        .dt-jump-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 0.88rem;
+            color: #555;
+            float: right;
+        }
+        #dt-page-jump {
+            width: 80px;
+            padding: 5px 8px;
+            border: 1px solid #e0c97a;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            outline: none;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+        #dt-page-jump::-webkit-inner-spin-button,
+        #dt-page-jump::-webkit-outer-spin-button { -webkit-appearance: none; }
+        #dt-page-jump:focus {
+            border-color: #f5a623;
+            box-shadow: 0 0 0 2px rgba(245,166,35,0.2);
+        }
+        #dt-page-go {
+            padding: 5px 14px;
+            background: linear-gradient(135deg, #f5a623, #ffe066);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #3d2800;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+        #dt-page-go:hover { filter: brightness(1.08); }
+
+        /* Pagination – force yellow theme over Bootstrap blue */
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+            margin-bottom: 0;
+        }
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item a.page-link {
+            color: #c17f00 !important;
+            background-color: #fff !important;
+            border-color: #e0c97a !important;
+            box-shadow: none !important;
+        }
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item a.page-link:hover {
+            color: #3d2800 !important;
+            background-color: #fff8e1 !important;
+            border-color: #f5a623 !important;
+        }
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item a.page-link:focus {
+            color: #3d2800 !important;
+            background-color: #fff8e1 !important;
+            border-color: #f5a623 !important;
+            box-shadow: 0 0 0 0.2rem rgba(245, 166, 35, 0.25) !important;
+        }
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item.active a.page-link,
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item.active a.page-link:hover,
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item.active a.page-link:focus {
+            color: #3d2800 !important;
+            background: linear-gradient(135deg, #f5a623, #ffe066) !important;
+            border-color: #f5a623 !important;
+            font-weight: 700;
+        }
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item.disabled a.page-link,
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination li.page-item.disabled a.page-link:hover {
+            color: #bbb !important;
+            background-color: #fafafa !important;
+            border-color: #e8e8e8 !important;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== Preloader ========== -->
+<div id="preloader">
+    <div class="spinner"></div>
+</div>
+
+<!-- ========== Navbar ========== -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container" style="max-width:1400px;">
+        <a class="navbar-brand" href="index.html">
+            <img src="assets/img/logo.png" alt="Duck GTEx logo" class="brand-logo">
+            <span class="brand-text">Duck GTEx</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-start" id="navMenu">
+            <ul class="navbar-nav ml-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown active">
+                    <a class="nav-link dropdown-toggle" href="#" id="qtlDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        QTL
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="qtlDropdown">
+                        <a class="dropdown-item" href="eqtl.html">
+                            <i class="fas fa-table mr-2" style="color:#f5a623;"></i>eQTL
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== Page Header ========== -->
+<section class="table-page-header">
+    <div class="container-fluid" style="max-width:2000px; padding:0 24px;">
+        <div class="table-page-header-content">
+        <h1 class="fade-up delay-1">
+            <i class="fas fa-table mr-3" style="color:var(--primary-light);"></i>eQTL Data
+        </h1>
+        <p class="fade-up delay-2">
+            Significant expression Quantitative Trait Loci (eQTL) across adipose, liver, and muscle
+            tissues in Muscovy duck (<em>Cairina moschata</em>). Use text search for gene/variant fields,
+            numeric ranges for statistical columns, and the tissue dropdown to filter by tissue.
+        </p>
+        <div class="row fade-up delay-3" style="margin-top:20px; gap:0;">
+            <div class="col-auto mr-4">
+                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;">Total records</span><br>
+                <strong style="color:var(--primary-light);font-size:1.4rem;">40,001</strong>
+            </div>
+            <div class="col-auto mr-4">
+                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;">Tissues</span><br>
+                <strong style="color:var(--primary-light);font-size:1.4rem;">3</strong>
+            </div>
+            <div class="col-auto">
+                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;">Columns</span><br>
+                <strong style="color:var(--primary-light);font-size:1.4rem;">11</strong>
+            </div>
+        </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== Table Section ========== -->
+<section class="table-section">
+    <div class="container-fluid" style="max-width:2000px; padding:0 24px;">
+        <div id="eqtl-table-wrapper">
+
+            <!-- Loading overlay (shown until data is parsed) -->
+            <div id="loading-overlay">
+                <div class="loading-spinner"></div>
+                <p style="font-size:1rem;color:#888;">Loading eQTL data, please wait…</p>
+                <p id="loading-msg" style="font-size:0.85rem;color:#aaa;margin-top:4px;"></p>
+            </div>
+
+            <!-- The actual table (hidden until data loaded) -->
+            <div id="table-container" style="display:none;">
+                <table id="eqtlTable" class="table table-striped table-bordered table-hover w-100">
+                    <thead>
+                        <tr>
+                            <th>Gene ID</th>
+                            <th>Gene Name</th>
+                            <th>Variant ID</th>
+                            <th>Ref Allele</th>
+                            <th>Alt Allele</th>
+                            <th>P-value</th>
+                            <th>Effect Size</th>
+                            <th>SE</th>
+                            <th>Allele Freq</th>
+                            <th>Distance to TSS</th>
+                            <th>Tissue</th>
+                        </tr>
+                        <!-- search row injected by initComplete -->
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== Footer ========== -->
+<footer class="site-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 mb-4">
+                <div class="footer-title">Duck GTEx</div>
+                <p class="footer-text">
+                    A multi-tissue regulatory genomics resource for Muscovy duck
+                    (<em>Cairina moschata</em>).
+                </p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="footer-title">Quick Links</div>
+                <ul class="list-unstyled footer-text">
+                    <li><a href="index.html" class="footer-link">Home</a></li>
+                    <li><a href="eqtl.html" class="footer-link">eQTL Data</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="footer-title">Column Guide</div>
+                <ul class="list-unstyled footer-text" style="font-size:0.82rem;">
+                    <li><strong>SE</strong>: Standard Error of Effect Size</li>
+                    <li><strong>Allele Freq</strong>: Alternative Allele Frequency</li>
+                    <li><strong>Distance to TSS</strong>: bp from Transcription Start Site</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Duck GTEx Project. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<!-- ========== Scripts ========== -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/jquery.dataTables.min.js"></script>
+<script src="assets/js/dataTables.bootstrap4.min.js"></script>
+<script>
+$(function () {
+    // Hide preloader
+    $('#preloader').fadeOut(400);
+
+    // Navbar scroll
+    $(window).on('scroll', function () {
+        $('#mainNav').toggleClass('scrolled', $(this).scrollTop() > 60);
+    });
+
+    // Scroll-triggered reveal: re-animate every time element enters viewport
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('in-view');
+            } else {
+                e.target.classList.remove('in-view');
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+
+    // Debounce helper for column filters
+    function debounce(fn, wait) {
+        var timer;
+        return function () {
+            var ctx = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () { fn.apply(ctx, args); }, wait);
+        };
+    }
+
+    // Parse numeric filter input (supports scientific notation)
+    function parseNum(val) {
+        if (val === '' || val == null) return null;
+        var n = parseFloat(String(val).trim());
+        return isNaN(n) ? null : n;
+    }
+
+    // Numeric range + tissue filters (columns 5–10)
+    var numericCols = [5, 6, 7, 8, 9];
+    var tissueCol = 10;
+    var rangeFilters = {};
+    var tissueFilter = '';
+
+    $.fn.dataTable.ext.search.push(function (settings, data) {
+        if (settings.nTable.id !== 'eqtlTable') return true;
+
+        for (var i = 0; i < numericCols.length; i++) {
+            var col = numericCols[i];
+            var f = rangeFilters[col];
+            if (!f) continue;
+            var val = parseFloat(data[col]);
+            if (isNaN(val)) return false;
+            if (f.min !== null && val < f.min) return false;
+            if (f.max !== null && val > f.max) return false;
+        }
+
+        if (tissueFilter && data[tissueCol] !== tissueFilter) return false;
+        return true;
+    });
+
+    function applyCustomFilters(table) {
+        table.draw();
+    }
+
+    // ---- Load pre-processed JSON (faster than TSV parsing) ----
+    var dataUrl = 'data/web_eqtl.json';
+    $('#loading-msg').text('Downloading data…');
+
+    fetch(dataUrl)
+        .then(function (res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        })
+        .then(function (rowData) {
+            $('#loading-msg').text('Rendering table…');
+
+            // Defer init so loading message can paint
+            requestAnimationFrame(function () {
+                $('#loading-overlay').hide();
+                $('#table-container').show();
+
+                var table = $('#eqtlTable').DataTable({
+                    data: rowData,
+                    deferRender: true,
+                    processing: true,
+                    pageLength: 15,
+                    lengthMenu: [[15, 25, 50, 100, 500], [15, 25, 50, 100, 500]],
+                    order: [],          // data is pre-sorted by P-value in JSON
+                    searchDelay: 350,
+                    autoWidth: false,
+                    scrollX: true,
+                    language: {
+                        search:         '<i class="fas fa-search"></i>&nbsp; Global search:',
+                        lengthMenu:     'Show _MENU_ entries',
+                        info:           'Showing _START_ – _END_ of _TOTAL_ eQTLs (sorted by P-value)',
+                        infoFiltered:   '(filtered from _MAX_ total)',
+                        paginate: {
+                            first:    '<i class="fas fa-angle-double-left"></i>',
+                            previous: '<i class="fas fa-angle-left"></i>',
+                            next:     '<i class="fas fa-angle-right"></i>',
+                            last:     '<i class="fas fa-angle-double-right"></i>'
+                        }
+                    },
+                    columnDefs: [
+                        { targets: '_all', className: 'dt-head-center dt-center' },
+                        { targets: [5, 6, 7, 8, 9], className: 'dt-head-center dt-center mono' },
+                        { targets: 10, className: 'dt-head-center dt-center text-nowrap' }
+                    ],
+                    initComplete: function () {
+                        var api = this.api();
+                        var textPlaceholders = [
+                            'Gene ID…', 'Gene Name…', 'Variant ID…', 'Ref…', 'Alt…'
+                        ];
+                        var numPlaceholders = [
+                            { min: 'Min', max: 'Max' },
+                            { min: 'Min', max: 'Max' },
+                            { min: 'Min', max: 'Max' },
+                            { min: 'Min', max: 'Max' },
+                            { min: 'Min', max: 'Max' }
+                        ];
+                        var filterRow = $('<tr class="filter-row"></tr>');
+
+                        api.columns().every(function (i) {
+                            var col = this;
+                            var cell = $('<th></th>');
+
+                            if (i < 5) {
+                                var input = $('<input type="text" />')
+                                    .attr('placeholder', textPlaceholders[i] || '…');
+                                cell.append(input);
+                                input.on('keyup change clear', debounce(function () {
+                                    if (col.search() !== this.value) {
+                                        col.search(this.value).draw();
+                                    }
+                                }, 300));
+                            } else if (numericCols.indexOf(i) !== -1) {
+                                var idx = numericCols.indexOf(i);
+                                var range = $('<div class="num-range"></div>');
+                                var minInput = $('<input type="text" inputmode="decimal" />')
+                                    .attr('placeholder', numPlaceholders[idx].min);
+                                var maxInput = $('<input type="text" inputmode="decimal" />')
+                                    .attr('placeholder', numPlaceholders[idx].max);
+                                range.append(minInput, maxInput);
+                                cell.append(range);
+
+                                rangeFilters[i] = { min: null, max: null };
+                                var updateRange = debounce(function () {
+                                    rangeFilters[i] = {
+                                        min: parseNum(minInput.val()),
+                                        max: parseNum(maxInput.val())
+                                    };
+                                    applyCustomFilters(api);
+                                }, 300);
+                                minInput.on('keyup change clear', updateRange);
+                                maxInput.on('keyup change clear', updateRange);
+                            } else if (i === tissueCol) {
+                                var select = $('<select></select>')
+                                    .append(
+                                        $('<option value="">All tissues</option>'),
+                                        $('<option value="adipose">adipose</option>'),
+                                        $('<option value="liver">liver</option>'),
+                                        $('<option value="muscle">muscle</option>')
+                                    );
+                                cell.append(select);
+                                select.on('change', function () {
+                                    tissueFilter = this.value;
+                                    applyCustomFilters(api);
+                                });
+                            }
+
+                            filterRow.append(cell);
+                        });
+                        $(api.table().header()).append(filterRow);
+
+                        // ---- Page jump widget ----
+                        var totalPages = api.page.info().pages;
+                        var jumpHtml =
+                            '<div class="dt-jump-wrap">' +
+                            'Go to page&nbsp;' +
+                            '<input type="number" id="dt-page-jump" min="1" max="' + totalPages + '" placeholder="1–' + totalPages + '">' +
+                            '<button id="dt-page-go">Go</button>' +
+                            '</div>';
+                        $(api.table().container()).find('.dataTables_paginate').after(jumpHtml);
+
+                        // Update max when table is filtered/redrawn
+                        api.on('draw', function () {
+                            var info = api.page.info();
+                            $('#dt-page-jump').attr('max', info.pages).attr('placeholder', '1–' + info.pages);
+                        });
+
+                        // Go button click
+                        $(document).on('click', '#dt-page-go', function () {
+                            var pg = parseInt($('#dt-page-jump').val(), 10);
+                            var info = api.page.info();
+                            if (!isNaN(pg) && pg >= 1 && pg <= info.pages) {
+                                api.page(pg - 1).draw('page');
+                            }
+                        });
+
+                        // Enter key in input
+                        $(document).on('keydown', '#dt-page-jump', function (e) {
+                            if (e.key === 'Enter') $('#dt-page-go').trigger('click');
+                        });
+                    }
+                });
+            });
+        })
+        .catch(function (err) {
+            $('#loading-msg').html(
+                '<span style="color:#c0392b;">Error loading data: ' +
+                $('<div>').text(String(err)).html() + '</span>'
+            );
+        });
+});
+</script>
+</body>
+</html>

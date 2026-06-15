@@ -1,0 +1,16 @@
+# 项目备份包
+duck-gtex.tar.gz
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+.venv/
+venv/
+
+# 系统杂项
+.DS_Store
+Thumbs.db
+*.log
