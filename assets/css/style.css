@@ -295,9 +295,9 @@ img { max-width: 100%; }
 }
 .site-footer-full .footer-inner {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
-    padding-left: 32px;
+    padding-left: 80px;
     padding-right: 32px;
 }
 .footer-meta-label {
@@ -313,6 +313,7 @@ img { max-width: 100%; }
     color: rgba(255,255,255,0.7);
     font-size: 0.88rem;
     line-height: 1.7;
+    white-space: nowrap;
 }
 .footer-contact-grid {
     display: flex;
@@ -338,6 +339,8 @@ img { max-width: 100%; }
     display: inline-block;
 }
 .footer-text { font-size: 0.88rem; line-height: 1.7; }
+.footer-text li { white-space: nowrap; }
+.site-footer-full .footer-inner .row > [class*="col"] { min-width: 0; }
 .footer-link { color: var(--primary-light); text-decoration: underline; }
 .footer-link:hover { color: #fff; }
 .footer-bottom {
