@@ -6,7 +6,7 @@ Usage:  python3 serve.py [port]   (default: 8080)
 import sys
 import os
 import mimetypes
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -46,6 +46,7 @@ class GzipHandler(SimpleHTTPRequestHandler):
 
 
 os.chdir(ROOT)
-httpd = HTTPServer(('', PORT), GzipHandler)
-print('Duck GTEx server: http://localhost:%d/' % PORT)
+httpd = ThreadingHTTPServer(('', PORT), GzipHandler)
+httpd.daemon_threads = True
+print('Muscovy Duck GTEx server: http://localhost:%d/' % PORT)
 httpd.serve_forever()
