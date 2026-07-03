@@ -91,13 +91,18 @@
             font-size: 0.92rem;
             color: #3d2800;
             font-weight: 600;
+            white-space: nowrap;
+            flex: 1 1 auto;
+            min-width: 0;
         }
         .gwas-search-result-group {
-            font-size: 0.72rem;
+            font-size: 0.88rem;
+            font-weight: 800;
             color: #b5872a;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.05em;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         .gwas-search-no-results {
             padding: 14px 16px;
@@ -110,6 +115,71 @@
             color: #8a5a00;
             border-radius: 3px;
             padding: 0 1px;
+        }
+
+        /* ---- Custom trait select (matches search dropdown) ---- */
+        .gwas-select-wrap { position: relative; }
+        .gwas-select-native {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .gwas-select-toggle {
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .gwas-select-toggle:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(245,166,35,0.2);
+            outline: none;
+        }
+        .gwas-select-chevron {
+            font-size: 0.75rem;
+            color: #b5872a;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        .gwas-select-wrap.open .gwas-select-chevron { transform: rotate(180deg); }
+        .gwas-select-results { max-height: 320px; }
+        .gwas-select-group-label {
+            padding: 12px 16px 6px;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: #9a6500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: #fcfaf4;
+            pointer-events: none;
+        }
+        .gwas-select-group-label + .gwas-select-group-label,
+        .gwas-select-result-item + .gwas-select-group-label {
+            border-top: 1px solid #eee0c0;
+            margin-top: 4px;
+            padding-top: 14px;
+        }
+        .gwas-select-result-item {
+            padding: 9px 16px;
+            cursor: pointer;
+            font-size: 0.92rem;
+            color: #3d2800;
+            font-weight: 600;
+            border-bottom: 1px solid #fdf6e3;
+        }
+        .gwas-select-result-item:last-child { border-bottom: none; }
+        .gwas-select-result-item:hover,
+        .gwas-select-result-item.active,
+        .gwas-select-result-item.selected {
+            background: #fff8e1;
         }
 
         .gwas-nav-btn {
@@ -315,16 +385,24 @@
     <div class="container" style="max-width:1400px;">
         <div class="gwas-controls fade-up delay-1">
             <div class="row align-items-end">
-                <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+                <div class="col-lg-5 col-md-6 mb-3 mb-lg-0">
                     <label for="traitSearch"><i class="fas fa-search mr-1"></i>Search trait</label>
                     <div class="gwas-search-wrap">
                         <input type="text" id="traitSearch" class="form-control" placeholder="e.g. weight, C18:0, alanine…" autocomplete="off">
                         <div class="gwas-search-results d-none" id="traitSearchResults"></div>
                     </div>
                 </div>
-                <div class="col-lg-5 col-md-6 mb-3 mb-lg-0">
-                    <label for="traitSelect">Select trait <span class="trait-count-badge" id="traitCountBadge">65 traits</span></label>
-                    <select id="traitSelect" class="form-control"></select>
+                <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+                    <label for="traitSelectToggle">Select trait <span class="trait-count-badge" id="traitCountBadge">65 traits</span></label>
+                    <div class="gwas-select-wrap">
+                        <button type="button" id="traitSelectToggle" class="form-control gwas-select-toggle"
+                                aria-haspopup="listbox" aria-expanded="false">
+                            <span id="traitSelectLabel">Loading…</span>
+                            <i class="fas fa-chevron-down gwas-select-chevron" aria-hidden="true"></i>
+                        </button>
+                        <div class="gwas-search-results gwas-select-results d-none" id="traitSelectResults" role="listbox"></div>
+                        <select id="traitSelect" class="gwas-select-native" tabindex="-1" aria-hidden="true"></select>
+                    </div>
                 </div>
                 <div class="col-lg-3 col-md-12">
                     <div class="d-flex" style="gap:8px;">
@@ -473,6 +551,8 @@ $(function () {
     let traits = [];
     let traitOrder = [];
     let currentIndex = 0;
+    let searchActiveIndex = -1;
+    let selectActiveIndex = -1;
     const prefetchedSrcs = new Set();
 
     function slugify(trait) {
@@ -538,6 +618,11 @@ $(function () {
         probe.src = src;
 
         $('#traitSelect').val(t.trait);
+        $('#traitSelectLabel').text(t.display);
+        $('#traitSelectResults .gwas-select-result-item').removeClass('selected active');
+        $('#traitSelectResults .gwas-select-result-item').filter(function () {
+            return $(this).attr('data-trait') === t.trait;
+        }).addClass('selected');
 
         $('#prevTraitBtn').prop('disabled', idx === 0);
         $('#nextTraitBtn').prop('disabled', idx === traitOrder.length - 1);
@@ -550,18 +635,71 @@ $(function () {
     function buildSelect() {
         traitOrder = [];
         const $select = $('#traitSelect');
+        const $results = $('#traitSelectResults');
         $select.empty();
+        $results.empty();
         const byGroup = {};
         traits.forEach(t => { (byGroup[t.group] = byGroup[t.group] || []).push(t); });
         Object.keys(byGroup).forEach(group => {
+            $('<div class="gwas-select-group-label"></div>').text(group).appendTo($results);
             const $group = $('<optgroup></optgroup>').attr('label', group);
             byGroup[group].forEach(t => {
                 traitOrder.push(t);
                 $group.append($('<option></option>').val(t.trait).text(t.display));
+                $('<div class="gwas-select-result-item"></div>')
+                    .attr('data-trait', t.trait)
+                    .text(t.display)
+                    .appendTo($results);
             });
             $select.append($group);
         });
         $('#traitCountBadge').text(traitOrder.length + ' traits');
+    }
+
+    function getSelectResultItems() {
+        return $('#traitSelectResults .gwas-select-result-item');
+    }
+
+    function openSelectDropdown() {
+        $('#traitSearchResults').addClass('d-none');
+        searchActiveIndex = -1;
+        $('#traitSelectResults').removeClass('d-none');
+        $('.gwas-select-wrap').addClass('open');
+        $('#traitSelectToggle').attr('aria-expanded', 'true');
+        const $selected = $('#traitSelectResults .gwas-select-result-item.selected');
+        if ($selected.length) {
+            selectActiveIndex = getSelectResultItems().index($selected);
+            $selected.get(0).scrollIntoView({ block: 'nearest' });
+        } else {
+            selectActiveIndex = -1;
+        }
+    }
+
+    function closeSelectDropdown() {
+        $('#traitSelectResults').addClass('d-none');
+        $('.gwas-select-wrap').removeClass('open');
+        $('#traitSelectToggle').attr('aria-expanded', 'false');
+        selectActiveIndex = -1;
+        getSelectResultItems().removeClass('active');
+    }
+
+    function setSelectActiveIndex(nextIndex) {
+        const $items = getSelectResultItems();
+        if (!$items.length) {
+            selectActiveIndex = -1;
+            return;
+        }
+        selectActiveIndex = Math.max(0, Math.min(nextIndex, $items.length - 1));
+        $items.removeClass('active');
+        const $active = $items.eq(selectActiveIndex).addClass('active');
+        const el = $active.get(0);
+        if (el) el.scrollIntoView({ block: 'nearest' });
+    }
+
+    function selectTraitFromDropdown(trait) {
+        const idx = findIndexByTrait(trait);
+        if (idx !== -1) renderTrait(idx);
+        closeSelectDropdown();
     }
 
     function escapeRegExp(str) {
@@ -581,8 +719,35 @@ $(function () {
         return escapedText.replace(re, '<mark class="gwas-search-highlight">$1</mark>');
     }
 
+    function getSearchResultItems() {
+        return $('#traitSearchResults .gwas-search-result-item');
+    }
+
+    function setSearchActiveIndex(nextIndex) {
+        const $items = getSearchResultItems();
+        if (!$items.length) {
+            searchActiveIndex = -1;
+            return;
+        }
+
+        searchActiveIndex = Math.max(0, Math.min(nextIndex, $items.length - 1));
+        $items.removeClass('active');
+        const $active = $items.eq(searchActiveIndex).addClass('active');
+        const el = $active.get(0);
+        if (el) el.scrollIntoView({ block: 'nearest' });
+    }
+
+    function selectSearchResultItem($item) {
+        const trait = $item.attr('data-trait');
+        const idx = findIndexByTrait(trait);
+        if (idx !== -1) renderTrait(idx);
+        $('#traitSearchResults').addClass('d-none').empty();
+        searchActiveIndex = -1;
+        closeSelectDropdown();
+    }
+
     // The search box shows its own independent results list below the
-    // input; it does not filter or otherwise affect the trait <select>
+    // input; it does not filter or otherwise affect the trait picker
     // dropdown next to it.
     function renderSearchResults(query) {
         const $results = $('#traitSearchResults');
@@ -591,6 +756,7 @@ $(function () {
 
         if (!lowerQuery) {
             $results.addClass('d-none').empty();
+            searchActiveIndex = -1;
             return;
         }
 
@@ -599,6 +765,7 @@ $(function () {
         });
 
         $results.empty();
+        searchActiveIndex = -1;
         if (!matches.length) {
             $results.append($('<div class="gwas-search-no-results"></div>').text('No matching traits'));
         } else {
@@ -611,6 +778,7 @@ $(function () {
             });
         }
         $results.removeClass('d-none');
+        closeSelectDropdown();
     }
 
     // ---- Event bindings ----
@@ -622,28 +790,108 @@ $(function () {
     });
 
     $(document).on('click', '.gwas-search-result-item', function () {
-        const trait = $(this).attr('data-trait');
-        const idx = findIndexByTrait(trait);
-        if (idx !== -1) renderTrait(idx);
-        $('#traitSearchResults').addClass('d-none').empty();
+        selectSearchResultItem($(this));
+    });
+
+    $(document).on('mouseenter', '.gwas-search-result-item', function () {
+        const $items = getSearchResultItems();
+        searchActiveIndex = $items.index(this);
+        $items.removeClass('active');
+        $(this).addClass('active');
     });
 
     $(document).on('click', function (e) {
         if (!$(e.target).closest('.gwas-search-wrap').length) {
             $('#traitSearchResults').addClass('d-none');
+            searchActiveIndex = -1;
+        }
+        if (!$(e.target).closest('.gwas-select-wrap').length) {
+            closeSelectDropdown();
+        }
+    });
+
+    $('#traitSelectToggle').on('click', function (e) {
+        e.stopPropagation();
+        if ($('#traitSelectResults').hasClass('d-none')) {
+            openSelectDropdown();
+        } else {
+            closeSelectDropdown();
+        }
+    });
+
+    $(document).on('click', '.gwas-select-result-item', function () {
+        selectTraitFromDropdown($(this).attr('data-trait'));
+    });
+
+    $(document).on('mouseenter', '.gwas-select-result-item', function () {
+        const $items = getSelectResultItems();
+        selectActiveIndex = $items.index(this);
+        $items.removeClass('active');
+        $(this).addClass('active');
+    });
+
+    $('#traitSelectToggle').on('keydown', function (e) {
+        const $results = $('#traitSelectResults');
+        const $items = getSelectResultItems();
+        const isOpen = !$results.hasClass('d-none');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!isOpen) {
+                openSelectDropdown();
+                setSelectActiveIndex(selectActiveIndex >= 0 ? selectActiveIndex : 0);
+            } else {
+                setSelectActiveIndex(selectActiveIndex + 1);
+            }
+            return;
+        }
+        if (e.key === 'ArrowUp' && isOpen) {
+            e.preventDefault();
+            setSelectActiveIndex(selectActiveIndex <= 0 ? 0 : selectActiveIndex - 1);
+            return;
+        }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (!isOpen) {
+                openSelectDropdown();
+                return;
+            }
+            const $target = selectActiveIndex >= 0 ? $items.eq(selectActiveIndex) : $items.filter('.selected').first();
+            if ($target.length) selectTraitFromDropdown($target.attr('data-trait'));
+            return;
+        }
+        if (e.key === 'Escape' && isOpen) {
+            e.preventDefault();
+            closeSelectDropdown();
         }
     });
 
     $('#traitSearch').on('keydown', function (e) {
+        const $results = $('#traitSearchResults');
+        const $items = getSearchResultItems();
+        const hasResults = !$results.hasClass('d-none') && $items.length > 0;
+
+        if (e.key === 'ArrowDown' && hasResults) {
+            e.preventDefault();
+            setSearchActiveIndex(searchActiveIndex + 1);
+            return;
+        }
+        if (e.key === 'ArrowUp' && hasResults) {
+            e.preventDefault();
+            setSearchActiveIndex(searchActiveIndex <= 0 ? 0 : searchActiveIndex - 1);
+            return;
+        }
+        if (e.key === 'Enter' && hasResults) {
+            e.preventDefault();
+            const $target = searchActiveIndex >= 0 ? $items.eq(searchActiveIndex) : $items.eq(0);
+            if ($target.length) selectSearchResultItem($target);
+            return;
+        }
         if (e.key === 'Escape') {
-            $('#traitSearchResults').addClass('d-none');
+            $results.addClass('d-none');
+            searchActiveIndex = -1;
             $(this).blur();
         }
-    });
-
-    $('#traitSelect').on('change', function () {
-        const idx = findIndexByTrait(this.value);
-        if (idx !== -1) renderTrait(idx);
     });
 
     $('#prevTraitBtn').on('click', function () {

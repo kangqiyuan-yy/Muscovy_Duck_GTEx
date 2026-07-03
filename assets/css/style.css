@@ -381,11 +381,10 @@ img { max-width: 100%; }
 .table-page-header {
     background: linear-gradient(135deg, var(--dark-bg), var(--primary-dark));
     color: #fff;
-    padding-top: 72px;
-    min-height: 280px;
+    /* navbar is fixed-top (~84px) and overlays this section, so padding-top
+       must include the navbar height plus the desired visible clearance */
+    padding: 132px 0 48px;
     box-sizing: border-box;
-    display: flex;
-    align-items: center;
 }
 .table-page-header-content {
     padding: 0;
