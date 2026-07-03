@@ -1,0 +1,457 @@
+[
+  {
+    "trait": "a*",
+    "display": "a* (redness)",
+    "group": "Meat Color",
+    "jpg": "Rect_Manhtn.a_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.a_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "abdominal_fat_percentage",
+    "display": "Abdominal fat percentage",
+    "group": "Carcass & Composition",
+    "jpg": "Rect_Manhtn.Abdominal_Fat_Percentage_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Abdominal_Fat_Percentage_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "alanine",
+    "display": "Alanine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Alanine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Alanine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "arginine",
+    "display": "Arginine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Arginine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Arginine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "asparagine",
+    "display": "Asparagine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Asparagine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Asparagine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "aspartic_acid",
+    "display": "Aspartic acid",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Aspartic_Acid_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Aspartic_Acid_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "b*",
+    "display": "b* (yellowness)",
+    "group": "Meat Color",
+    "jpg": "Rect_Manhtn.b_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.b_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "body_slanting_length",
+    "display": "Body slanting length",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.Body_Slant_Length_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Body_Slant_Length_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "breast_muscle_percentage",
+    "display": "Breast muscle percentage",
+    "group": "Carcass & Composition",
+    "jpg": "Rect_Manhtn.Breast_Muscle_Percentage_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Breast_Muscle_Percentage_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C14:0",
+    "display": "C14:0",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C14_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C14_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C15:0",
+    "display": "C15:0",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C15_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C15_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C16:0",
+    "display": "C16:0",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C16_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C16_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C17:0",
+    "display": "C17:0",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C17_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C17_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C18:0",
+    "display": "C18:0",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C18_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C18_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C18:3n-3",
+    "display": "C18:3n-3",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C183_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C183_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C18:2n-6",
+    "display": "C18:2n-6",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C186_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C186_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "trans-C18:1n-9",
+    "display": "Trans-c18:1n-9",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C18E_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C18E_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "cis-C18:1n-9",
+    "display": "Cis-c18:1n-9",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C18Z_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C18Z_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C20:0",
+    "display": "C20:0",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C20_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C20_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C20:2n-6",
+    "display": "C20:2n-6",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C202n_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C202n_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C20:3n-6",
+    "display": "C20:3n-6",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C203n_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C203n_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C20:4n-6",
+    "display": "C20:4n-6",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C204n_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C204n_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C20:3n-9",
+    "display": "C20:3n-9",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C209_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C209_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "cis-C20:1n-9",
+    "display": "Cis-c20:1n-9",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C20Z_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C20Z_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C22:4n-6",
+    "display": "C22:4n-6",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C224n_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C224n_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "C22:5n-6",
+    "display": "C22:5n-6",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.C225n_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.C225n_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "chest_depth",
+    "display": "Chest depth",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.Chest_Depth_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Chest_Depth_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "chest_width",
+    "display": "Chest width",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.Chest_Width_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Chest_Width_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "cis-C16:1n-9",
+    "display": "Cis-c16:1n-9",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.cis_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.cis_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "cystine",
+    "display": "Cystine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Cystine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Cystine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "dha",
+    "display": "DHA",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.DHA_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.DHA_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "dpa",
+    "display": "DPA",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.DPA_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.DPA_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "epa",
+    "display": "EPA",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.EPA_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.EPA_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "fat_content",
+    "display": "Fat content",
+    "group": "Meat Quality",
+    "jpg": "Rect_Manhtn.Fat_Content_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Fat_Content_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "eviscerated_yield",
+    "display": "Eviscerated yield",
+    "group": "Carcass & Composition",
+    "jpg": "Rect_Manhtn.Full_Eviscerated_Yield_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Full_Eviscerated_Yield_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "glutamic_acid",
+    "display": "Glutamic acid",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Glutamic_Acid_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Glutamic_Acid_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "glutamine",
+    "display": "Glutamine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Glutamine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Glutamine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "glycine",
+    "display": "Glycine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Glycine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Glycine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "hipbone_width",
+    "display": "Hipbone width",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.Hipbone_Width_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Hipbone_Width_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "histidine",
+    "display": "Histidine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Histidine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Histidine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "inosinic_acid_content",
+    "display": "Inosinic acid content",
+    "group": "Meat Quality",
+    "jpg": "Rect_Manhtn.Inosinic_Acid_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Inosinic_Acid_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "isoleucine",
+    "display": "Isoleucine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Isoleucine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Isoleucine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "keel_length",
+    "display": "Keel length",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.Keel_Length_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Keel_Length_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "l*",
+    "display": "L* (lightness)",
+    "group": "Meat Color",
+    "jpg": "Rect_Manhtn.L_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.L_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "leg_muscle_percentage",
+    "display": "Leg muscle percentage",
+    "group": "Carcass & Composition",
+    "jpg": "Rect_Manhtn.Leg_Muscle_Percentage_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Leg_Muscle_Percentage_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "leucine",
+    "display": "Leucine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Leucine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Leucine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "lysine",
+    "display": "Lysine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Lysine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Lysine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "methionine",
+    "display": "Methionine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Methionine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Methionine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "moisture_content",
+    "display": "Moisture content",
+    "group": "Meat Quality",
+    "jpg": "Rect_Manhtn.Moisture_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Moisture_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "neck_length",
+    "display": "Neck length",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.Neck_Length_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Neck_Length_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "pH",
+    "display": "pH",
+    "group": "Meat Quality",
+    "jpg": "Rect_Manhtn.PH_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.PH_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "phenylalanine",
+    "display": "Phenylalanine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Phenylalanine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Phenylalanine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "proline",
+    "display": "Proline",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Proline_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Proline_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "semi_diving_length",
+    "display": "Semi diving length",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.Semi_Diving_Length_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Semi_Diving_Length_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "semi_eviscerated_yield",
+    "display": "Semi eviscerated yield",
+    "group": "Carcass & Composition",
+    "jpg": "Rect_Manhtn.Semi_Eviscerated_Yield_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Semi_Eviscerated_Yield_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "serine",
+    "display": "Serine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Serine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Serine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "shear_force",
+    "display": "Shear force",
+    "group": "Meat Quality",
+    "jpg": "Rect_Manhtn.Shear_Force_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Shear_Force_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "skin_fat_percentage",
+    "display": "Skin fat percentage",
+    "group": "Carcass & Composition",
+    "jpg": "Rect_Manhtn.Skin_Fat_Percentage_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Skin_Fat_Percentage_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "taurine",
+    "display": "Taurine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Taurine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Taurine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "threonine",
+    "display": "Threonine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Threonine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Threonine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "tryptophan",
+    "display": "Tryptophan",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Tryptophan_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Tryptophan_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "tyrosine",
+    "display": "Tyrosine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Tyrosine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Tyrosine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "valine",
+    "display": "Valine",
+    "group": "Amino Acids",
+    "jpg": "Rect_Manhtn.Valine_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Valine_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "weight",
+    "display": "Weight",
+    "group": "Growth & Body Size",
+    "jpg": "Rect_Manhtn.weight_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.weight_p_wald_manhattan.pdf"
+  },
+  {
+    "trait": "cis-C16:1n-7",
+    "display": "Cis-c16:1n-7",
+    "group": "Fatty Acids",
+    "jpg": "Rect_Manhtn.Z_p_wald_manhattan_rasterized.jpg",
+    "pdf": "Rect_Manhtn.Z_p_wald_manhattan.pdf"
+  }
+]

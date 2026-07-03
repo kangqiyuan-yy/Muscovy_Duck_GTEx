@@ -13,6 +13,11 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 COMPRESSIBLE = {'.json', '.js', '.css', '.html', '.tsv', '.txt'}
 
+# Static, content-addressed-ish assets that never change after being
+# published (rendered plots, vector PDFs, images). Cache them hard so
+# repeated views / trait switching don't re-download the same bytes.
+LONG_CACHE = {'.jpg', '.jpeg', '.png', '.pdf', '.webp', '.svg'}
+
 
 class GzipHandler(SimpleHTTPRequestHandler):
 
@@ -38,6 +43,13 @@ class GzipHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(f.read())
         else:
             super().do_GET()
+
+    def end_headers(self):
+        path = self.translate_path(self.path)
+        _, ext = os.path.splitext(path)
+        if ext.lower() in LONG_CACHE:
+            self.send_header('Cache-Control', 'public, max-age=604800, immutable')
+        super().end_headers()
 
     def log_message(self, fmt, *args):
         # Only log non-200/304 responses

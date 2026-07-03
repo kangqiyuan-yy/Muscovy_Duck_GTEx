@@ -1,6 +1,9 @@
 # 项目备份包
 duck-gtex.tar.gz
 
+# GWAS 数据
+gwas/
+
 # Python
 __pycache__/
 *.py[cod]

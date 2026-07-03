@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GWAS Results – Muscovy Duck GTEx</title>
+    <link rel="icon" href="assets/img/logo.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body { background: #f8f4ec; }
+
+        /* ---- Control panel ---- */
+        .gwas-controls {
+            background: #fff;
+            border: 1px solid #eee0c0;
+            border-radius: 14px;
+            padding: 22px 24px;
+            box-shadow: 0 4px 18px rgba(193,127,0,0.06);
+            margin-top: 24px;
+            position: relative;
+            z-index: 5;
+        }
+        .gwas-controls label {
+            font-weight: 700;
+            color: #8a5a00;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .gwas-controls .form-control,
+        .gwas-controls select.form-control {
+            border: 1px solid #e0c97a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            height: auto;
+            font-size: 0.95rem;
+        }
+        .gwas-controls .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(245,166,35,0.2);
+        }
+        .trait-count-badge {
+            display: inline-block;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* ---- Search results dropdown ---- */
+        .gwas-search-wrap { position: relative; }
+        .gwas-search-results {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid #e0c97a;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(193,127,0,0.14);
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 20;
+        }
+        .gwas-search-results.d-none { display: none; }
+        .gwas-search-result-item {
+            padding: 9px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #fdf6e3;
+        }
+        .gwas-search-result-item:last-child { border-bottom: none; }
+        .gwas-search-result-item:hover,
+        .gwas-search-result-item.active {
+            background: #fff8e1;
+        }
+        .gwas-search-result-name {
+            font-size: 0.92rem;
+            color: #3d2800;
+            font-weight: 600;
+        }
+        .gwas-search-result-group {
+            font-size: 0.72rem;
+            color: #b5872a;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+        .gwas-search-no-results {
+            padding: 14px 16px;
+            font-size: 0.88rem;
+            color: #999;
+            text-align: center;
+        }
+        .gwas-search-highlight {
+            background: #ffe9a8;
+            color: #8a5a00;
+            border-radius: 3px;
+            padding: 0 1px;
+        }
+
+        .gwas-nav-btn {
+            border: 1px solid #e0c97a;
+            background: #fff;
+            border-radius: 8px;
+            color: #c17f00;
+            font-weight: 700;
+            padding: 10px 18px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .gwas-nav-btn:hover:not(:disabled) {
+            background: var(--gradient-btn);
+            color: #3d2800;
+            border-color: var(--primary);
+        }
+        .gwas-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ---- Display card ---- */
+        .gwas-display-card {
+            background: #fff;
+            border: 1px solid #eee0c0;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(193,127,0,0.06);
+            padding: 26px;
+            margin-top: 24px;
+        }
+        .gwas-display-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #fdf6e3;
+        }
+        .gwas-trait-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #3d2800;
+            margin: 0;
+        }
+        .gwas-trait-group {
+            font-size: 0.82rem;
+            color: #b5872a;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .gwas-download-btn {
+            background: var(--gradient-btn);
+            color: #3d2800 !important;
+            font-weight: 700;
+            border-radius: 10px;
+            border: none;
+            padding: 10px 22px;
+            font-size: 0.92rem;
+            text-decoration: none !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: filter 0.2s;
+        }
+        .gwas-download-btn:hover { filter: brightness(1.06); color: #3d2800 !important; }
+        .gwas-download-hint {
+            font-size: 0.76rem;
+            color: #aaa;
+            margin-top: 6px;
+        }
+
+        .gwas-image-wrap {
+            position: relative;
+            text-align: center;
+            min-height: 320px;
+            background: #fcfaf4;
+            border-radius: 10px;
+            border: 1px dashed #e8d9a8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .gwas-image-wrap img {
+            max-width: 100%;
+            height: auto;
+            cursor: zoom-in;
+            border-radius: 6px;
+            transition: opacity 0.25s;
+        }
+        .gwas-image-wrap img.loading { opacity: 0; }
+        .gwas-img-spinner {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            border: 4px solid #f0e2ba;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: gwasSpin 0.8s linear infinite;
+        }
+        .gwas-img-spinner.d-none { display: none; }
+        @keyframes gwasSpin { to { transform: rotate(360deg); } }
+
+        .gwas-caption {
+            text-align: center;
+            font-size: 0.82rem;
+            color: #999;
+            margin-top: 10px;
+        }
+        .gwas-image-index {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(61, 40, 0, 0.78);
+            color: #fff8e1;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.02em;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- ========== Preloader ========== -->
+<div id="preloader">
+    <div class="spinner"></div>
+</div>
+
+<!-- ========== Navbar ========== -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container" style="max-width:1400px;">
+        <a class="navbar-brand" href="index.html">
+            <img src="assets/img/logo.png" alt="Muscovy Duck GTEx logo" class="brand-logo">
+            <span class="brand-text">Muscovy Duck GTEx</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-start" id="navMenu">
+            <ul class="navbar-nav ml-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="qtlDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        QTL
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="qtlDropdown">
+                        <a class="dropdown-item" href="eqtl.html">
+                            <i class="fas fa-table mr-2" style="color:#f5a623;"></i>eQTL
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="gwas.html">GWAS</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== Page Header ========== -->
+<section class="table-page-header">
+    <div class="container-fluid" style="max-width:1400px; padding:0 24px;">
+        <div class="table-page-header-content">
+        <h1 class="fade-up delay-1">
+            <i class="fas fa-chart-area mr-3" style="color:var(--primary-light);"></i>GWAS Results
+        </h1>
+        <p class="fade-up delay-2">
+            Genome-wide association study (GWAS) Manhattan plots for 65 economically important traits
+            in Muscovy duck (<em>Cairina moschata</em>), spanning growth, carcass composition, meat
+            quality, meat color, amino acid, and fatty acid traits. Select a trait below to view its
+            Manhattan plot, or download the full-resolution vector PDF.
+        </p>
+        <div class="row fade-up delay-3" style="margin-top:20px; gap:0;">
+            <div class="col-auto mr-4">
+                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;">Traits</span><br>
+                <strong style="color:var(--primary-light);font-size:1.4rem;">65</strong>
+            </div>
+            <div class="col-auto mr-4">
+                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;">Categories</span><br>
+                <strong style="color:var(--primary-light);font-size:1.4rem;">6</strong>
+            </div>
+            <div class="col-auto">
+                <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;">Method</span><br>
+                <strong style="color:var(--primary-light);font-size:1.4rem;">p_wald</strong>
+            </div>
+        </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== Control Panel ========== -->
+<section class="default-padding" style="padding-top:0; padding-bottom:0;">
+    <div class="container" style="max-width:1400px;">
+        <div class="gwas-controls fade-up delay-1">
+            <div class="row align-items-end">
+                <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
+                    <label for="traitSearch"><i class="fas fa-search mr-1"></i>Search trait</label>
+                    <div class="gwas-search-wrap">
+                        <input type="text" id="traitSearch" class="form-control" placeholder="e.g. weight, C18:0, alanine…" autocomplete="off">
+                        <div class="gwas-search-results d-none" id="traitSearchResults"></div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-6 mb-3 mb-lg-0">
+                    <label for="traitSelect">Select trait <span class="trait-count-badge" id="traitCountBadge">65 traits</span></label>
+                    <select id="traitSelect" class="form-control"></select>
+                </div>
+                <div class="col-lg-3 col-md-12">
+                    <div class="d-flex" style="gap:8px;">
+                        <button id="prevTraitBtn" class="gwas-nav-btn flex-fill" type="button">
+                            <i class="fas fa-angle-left mr-1"></i>Prev
+                        </button>
+                        <button id="nextTraitBtn" class="gwas-nav-btn flex-fill" type="button">
+                            Next<i class="fas fa-angle-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== Display Section ========== -->
+<section class="default-padding" style="padding-top:20px;">
+    <div class="container" style="max-width:1400px;">
+
+        <div class="gwas-display-card fade-up delay-2">
+            <div class="gwas-display-header">
+                <div>
+                    <div class="gwas-trait-group" id="traitGroupLabel">—</div>
+                    <h3 class="gwas-trait-title" id="traitTitle">Loading…</h3>
+                </div>
+                <div class="text-right">
+                    <a id="downloadPdfBtn" class="gwas-download-btn" href="#" download>
+                        <i class="fas fa-file-download"></i> Download vector PDF
+                    </a>
+                    <div class="gwas-download-hint">High-resolution PDF for publication use</div>
+                </div>
+            </div>
+
+            <div class="gwas-image-wrap">
+                <div class="gwas-img-spinner d-none" id="imgSpinner"></div>
+                <span class="gwas-image-index" id="traitImageIndex">— / —</span>
+                <img id="manhattanImg" src="" alt="Manhattan plot" data-toggle="modal" data-target="#gwasImgModal" title="Click to enlarge">
+            </div>
+            <p class="gwas-caption"><span id="traitCaptionIndex">— / —</span> — Manhattan plot of GWAS -log10(p) (GEMMA, p_wald) — click image to enlarge</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- ========== Image Modal (lightbox) ========== -->
+<div class="modal fade" id="gwasImgModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl-custom" role="document">
+        <div class="modal-content" style="border:none;border-radius:12px;overflow:hidden;">
+            <div class="modal-header py-2">
+                <h6 class="modal-title mb-0" id="gwasModalTitle" style="font-size:0.95rem;">Manhattan Plot</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-2">
+                <img id="gwasModalImg" src="" alt="Manhattan plot enlarged" class="img-fluid" style="border-radius:6px;" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Footer ========== -->
+<footer class="site-footer site-footer-full">
+    <div class="container-fluid footer-inner">
+        <div class="row">
+            <div class="col-lg col-md-6 mb-4">
+                <div class="footer-title">Muscovy Duck GTEx</div>
+                <p class="footer-text">
+                    A multi-tissue regulatory genomics resource for Muscovy duck
+                    (<em>Cairina moschata</em>). Providing open access to GWAS and eQTL data
+                    for the global poultry genomics community.
+                </p>
+            </div>
+            <div class="col-lg col-md-6 mb-4">
+                <div class="footer-title">Quick Links</div>
+                <ul class="list-unstyled footer-text">
+                    <li><a href="index.html" class="footer-link">Home</a></li>
+                    <li><a href="eqtl.html" class="footer-link">eQTL Data</a></li>
+                    <li><a href="gwas.html" class="footer-link">GWAS Results</a></li>
+                </ul>
+            </div>
+            <div class="col-lg col-md-6 mb-4">
+                <div class="footer-title">Data Summary</div>
+                <ul class="list-unstyled footer-text">
+                    <li>Species: <em>Cairina moschata</em> (Muscovy duck)</li>
+                    <li>GWAS traits: 65</li>
+                    <li>Method: GEMMA (p_wald)</li>
+                </ul>
+            </div>
+            <div class="col-lg col-md-6 mb-4">
+                <div class="footer-title">Developed By</div>
+                <div style="margin-bottom:12px;">
+                    <span class="footer-meta-label">Institution</span>
+                    <span class="footer-plain">Kunming Institute of Zoology, CAS</span>
+                </div>
+                <div>
+                    <span class="footer-meta-label">Email</span>
+                    <span class="footer-plain">yuankangqi@mail.kiz.ac.cn</span>
+                </div>
+            </div>
+            <div class="col-lg col-md-6 mb-4">
+                <div class="footer-title">Contact Us</div>
+                <div class="footer-contact-grid">
+                    <div class="footer-contact-item">
+                        <span class="footer-meta-label">Email</span>
+                        <span class="footer-plain">liulisheng@mail.kiz.ac.cn</span>
+                    </div>
+                    <div class="footer-contact-row">
+                        <div class="footer-contact-item">
+                            <span class="footer-meta-label">Email</span>
+                            <span class="footer-plain">pengminsheng@mail.kiz.ac.cn</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Muscovy Duck GTEx Project. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<!-- ========== Scripts ========== -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script>
+$(function () {
+    $('#preloader').fadeOut(400);
+
+    $(window).on('scroll', function () {
+        $('#mainNav').toggleClass('scrolled', $(this).scrollTop() > 60);
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('in-view');
+            else e.target.classList.remove('in-view');
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    const JPG_DIR = 'gwas/jpg_web/';
+    const PDF_DIR = 'gwas/pdf_vector/';
+
+    let traits = [];
+    let traitOrder = [];
+    let currentIndex = 0;
+    const prefetchedSrcs = new Set();
+
+    function slugify(trait) {
+        return trait.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+
+    function findIndexByTrait(traitId) {
+        return traitOrder.findIndex(t => t.trait === traitId);
+    }
+
+    function findIndexBySlug(slug) {
+        return traitOrder.findIndex(t => slugify(t.trait) === slug);
+    }
+
+    function prefetchImage(idx) {
+        if (idx < 0 || idx >= traitOrder.length) return;
+        const src = JPG_DIR + traitOrder[idx].jpg;
+        if (prefetchedSrcs.has(src)) return;
+        prefetchedSrcs.add(src);
+        const img = new Image();
+        img.src = src;
+    }
+
+    function prefetchNeighbors(idx) {
+        const run = () => { prefetchImage(idx - 1); prefetchImage(idx + 1); };
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(run, { timeout: 1500 });
+        } else {
+            setTimeout(run, 200);
+        }
+    }
+
+    function renderTrait(idx, opts) {
+        opts = opts || {};
+        if (idx < 0 || idx >= traitOrder.length) return;
+        currentIndex = idx;
+        const t = traitOrder[idx];
+        const positionLabel = (idx + 1) + ' / ' + traitOrder.length;
+
+        $('#traitTitle').text(t.display);
+        $('#traitGroupLabel').text(t.group);
+        $('#traitImageIndex').text(positionLabel);
+        $('#traitCaptionIndex').text('Image ' + positionLabel);
+        $('#downloadPdfBtn').attr('href', PDF_DIR + t.pdf);
+        $('#gwasModalTitle').text(t.display + ' — Manhattan Plot');
+
+        const $img = $('#manhattanImg');
+        const $spinner = $('#imgSpinner');
+        $img.addClass('loading');
+        $spinner.removeClass('d-none');
+        const src = JPG_DIR + t.jpg;
+        $img.attr('src', src).attr('alt', t.display + ' Manhattan plot');
+        $('#gwasModalImg').attr('src', src);
+
+        prefetchedSrcs.add(src);
+        const probe = new Image();
+        probe.onload = function () {
+            $spinner.addClass('d-none');
+            $img.removeClass('loading');
+            prefetchNeighbors(idx);
+        };
+        probe.onerror = function () { $spinner.addClass('d-none'); $img.removeClass('loading'); };
+        probe.src = src;
+
+        $('#traitSelect').val(t.trait);
+
+        $('#prevTraitBtn').prop('disabled', idx === 0);
+        $('#nextTraitBtn').prop('disabled', idx === traitOrder.length - 1);
+
+        if (!opts.skipHash) {
+            history.replaceState(null, '', '#trait=' + encodeURIComponent(slugify(t.trait)));
+        }
+    }
+
+    function buildSelect() {
+        traitOrder = [];
+        const $select = $('#traitSelect');
+        $select.empty();
+        const byGroup = {};
+        traits.forEach(t => { (byGroup[t.group] = byGroup[t.group] || []).push(t); });
+        Object.keys(byGroup).forEach(group => {
+            const $group = $('<optgroup></optgroup>').attr('label', group);
+            byGroup[group].forEach(t => {
+                traitOrder.push(t);
+                $group.append($('<option></option>').val(t.trait).text(t.display));
+            });
+            $select.append($group);
+        });
+        $('#traitCountBadge').text(traitOrder.length + ' traits');
+    }
+
+    function escapeRegExp(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function escapeHtml(str) {
+        return $('<div></div>').text(str).html();
+    }
+
+    // Wraps every case-insensitive occurrence of `query` inside `text` with
+    // a <mark> highlight span, HTML-escaping the rest of the text.
+    function highlightMatch(text, query) {
+        const escapedText = escapeHtml(text);
+        if (!query) return escapedText;
+        const re = new RegExp('(' + escapeRegExp(escapeHtml(query)) + ')', 'ig');
+        return escapedText.replace(re, '<mark class="gwas-search-highlight">$1</mark>');
+    }
+
+    // The search box shows its own independent results list below the
+    // input; it does not filter or otherwise affect the trait <select>
+    // dropdown next to it.
+    function renderSearchResults(query) {
+        const $results = $('#traitSearchResults');
+        const rawQuery = (query || '').trim();
+        const lowerQuery = rawQuery.toLowerCase();
+
+        if (!lowerQuery) {
+            $results.addClass('d-none').empty();
+            return;
+        }
+
+        const matches = traitOrder.filter(t => {
+            return (t.trait + ' ' + t.display + ' ' + t.group).toLowerCase().indexOf(lowerQuery) !== -1;
+        });
+
+        $results.empty();
+        if (!matches.length) {
+            $results.append($('<div class="gwas-search-no-results"></div>').text('No matching traits'));
+        } else {
+            matches.forEach(t => {
+                $('<div class="gwas-search-result-item"></div>')
+                    .attr('data-trait', t.trait)
+                    .append($('<span class="gwas-search-result-name"></span>').html(highlightMatch(t.display, rawQuery)))
+                    .append($('<span class="gwas-search-result-group"></span>').html(highlightMatch(t.group, rawQuery)))
+                    .appendTo($results);
+            });
+        }
+        $results.removeClass('d-none');
+    }
+
+    // ---- Event bindings ----
+    $('#traitSearch').on('input', function () {
+        renderSearchResults(this.value);
+    });
+    $('#traitSearch').on('focus', function () {
+        if (this.value.trim()) renderSearchResults(this.value);
+    });
+
+    $(document).on('click', '.gwas-search-result-item', function () {
+        const trait = $(this).attr('data-trait');
+        const idx = findIndexByTrait(trait);
+        if (idx !== -1) renderTrait(idx);
+        $('#traitSearchResults').addClass('d-none').empty();
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.gwas-search-wrap').length) {
+            $('#traitSearchResults').addClass('d-none');
+        }
+    });
+
+    $('#traitSearch').on('keydown', function (e) {
+        if (e.key === 'Escape') {
+            $('#traitSearchResults').addClass('d-none');
+            $(this).blur();
+        }
+    });
+
+    $('#traitSelect').on('change', function () {
+        const idx = findIndexByTrait(this.value);
+        if (idx !== -1) renderTrait(idx);
+    });
+
+    $('#prevTraitBtn').on('click', function () {
+        if (currentIndex > 0) renderTrait(currentIndex - 1);
+    });
+    $('#nextTraitBtn').on('click', function () {
+        if (currentIndex < traitOrder.length - 1) renderTrait(currentIndex + 1);
+    });
+
+    window.addEventListener('hashchange', function () {
+        const m = location.hash.match(/trait=([^&]+)/);
+        if (m) {
+            const idx = findIndexBySlug(decodeURIComponent(m[1]));
+            if (idx !== -1) renderTrait(idx, { skipHash: true });
+        }
+    });
+
+    // ---- Load trait data ----
+    fetch('data/gwas_traits.json')
+        .then(res => {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        })
+        .then(rows => {
+            traits = rows;
+            buildSelect();
+
+            let startIdx = 0;
+            const m = location.hash.match(/trait=([^&]+)/);
+            if (m) {
+                const idx = findIndexBySlug(decodeURIComponent(m[1]));
+                if (idx !== -1) startIdx = idx;
+            }
+            renderTrait(startIdx, { skipHash: !m });
+        })
+        .catch(err => {
+            $('#traitTitle').text('Failed to load trait data');
+            $('#traitGroupLabel').text('Error');
+            console.error(err);
+        });
+});
+</script>
+</body>
+</html>
