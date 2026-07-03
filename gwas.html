@@ -781,13 +781,16 @@ $(function () {
         closeSelectDropdown();
     }
 
+    function showSearchResultsIfQuery() {
+        const query = $('#traitSearch').val();
+        if (query.trim()) renderSearchResults(query);
+    }
+
     // ---- Event bindings ----
     $('#traitSearch').on('input', function () {
         renderSearchResults(this.value);
     });
-    $('#traitSearch').on('focus', function () {
-        if (this.value.trim()) renderSearchResults(this.value);
-    });
+    $('#traitSearch').on('focus click', showSearchResultsIfQuery);
 
     $(document).on('click', '.gwas-search-result-item', function () {
         selectSearchResultItem($(this));
