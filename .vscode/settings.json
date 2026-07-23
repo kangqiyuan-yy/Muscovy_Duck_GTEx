@@ -2,7 +2,7 @@
   "remote.autoForwardPorts": true,
   "remote.portsAttributes": {
     "8080": {
-      "label": "Muscovy Duck GTEx",
+      "label": "MuscovyDuckRVA",
       "onAutoForward": "notify"
     }
   }

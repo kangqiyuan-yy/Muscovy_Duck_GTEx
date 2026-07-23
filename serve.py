@@ -60,5 +60,5 @@ class GzipHandler(SimpleHTTPRequestHandler):
 os.chdir(ROOT)
 httpd = ThreadingHTTPServer(('', PORT), GzipHandler)
 httpd.daemon_threads = True
-print('Muscovy Duck GTEx server: http://localhost:%d/' % PORT)
+print('MuscovyDuckRVA server: http://localhost:%d/' % PORT)
 httpd.serve_forever()
